@@ -72,7 +72,6 @@ Add the component to the site
 
 Once you added the component you will se many fileds you can leverage to configure it.
 
-
 Field	Required	Description
 Record ID	TRUE	The id of the parent record to use, tipically the record gathered from the detail page
 Parent Object API Name	TRUE	The API name of the parent object, in our case Product2
@@ -94,6 +93,3 @@ Child detail page base URL	TRUE	The base url for the child detail page (***)
 (***) This is the base URL you can set into Experience Cloud inside the page settings, for instace if the child object is a product, the default base URL is “product”
 The following is the example with the Cross Sell Recommendation
 And the following is by using a custom Product_Designer Relationship
-
-FROM THE PDP
-FROM THE DESIGNER DETAIL PAGE
