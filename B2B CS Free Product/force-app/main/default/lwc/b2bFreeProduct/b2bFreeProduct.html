@@ -1,0 +1,61 @@
+<template>
+    <template if:true={isLoginOnBehalf}>
+
+        <template if:true={showSpinner}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+        <template if:false={showSpinner}>
+            <lightning-layout-item padding="around-small">
+                <h1>APPLY FREE PRODUCT DISCOUNTS</h1>
+            </lightning-layout-item>
+            <lightning-layout key={cartItem.Id} multiple-rows>
+                <lightning-layout-item size="12" 
+                    small-device-size="3"
+                    padding="around-small">
+                    <p><strong>Name</strong></p>
+                </lightning-layout-item>
+                <lightning-layout-item size="12"
+                    small-device-size="3"
+                    padding="around-small">
+                    <p><strong>Quantity</strong></p>
+                </lightning-layout-item>
+                <lightning-layout-item size="12"
+                    small-device-size="3"
+                    padding="around-small">
+                    <p><strong>Total Price</strong></p>
+                </lightning-layout-item>
+                <lightning-layout-item size="12"
+                    small-device-size="3"
+                    padding="around-small">
+                    <p><strong>Actions</strong></p>
+                </lightning-layout-item>
+            </lightning-layout>
+            <template for:each={cartItems} for:item="cartItem">
+                <lightning-layout key={cartItem.Id} multiple-rows>
+                    <lightning-layout-item size="12" 
+                        small-device-size="3"
+                        padding="around-small">
+                        <p>{cartItem.Name}</p>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12"
+                        small-device-size="3"
+                        padding="around-small">
+                        <p>{cartItem.Quantity}</p>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12"
+                    small-device-size="3"
+                    padding="around-small">
+                    <p><strong>{cartItem.TotalPrice}</strong></p>
+                </lightning-layout-item>
+                    <lightning-layout-item size="12"
+                        small-device-size="3"
+                        padding="around-small">
+                        <lightning-button data-id={cartItem.Id} variant="brand" label="Set Free" title="Set Free" onclick={setFreeItem} class="slds-m-left_x-small"></lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </template>
+        
+    </template>
+</template>
