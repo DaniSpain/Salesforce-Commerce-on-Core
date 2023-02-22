@@ -1,0 +1,16 @@
+<template>
+    <div>
+        <template if:true={childMappedData}>
+            <h2>{headerText}</h2>
+            <div class="child-container">
+                <template for:each={childMappedData} for:item="c">
+                    <div class={columnClass} key={c.Id} data-id={c.Id} onclick={navigateToChild}>
+                        <img src={c.Image} />
+                        <a href={c.Url}><h3>{c.Title}</h3></a>
+                        <p>{c.Subtitle}</p>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>LWR Generic Related</masterLabel>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__AppPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="recordId" type="String" label="Record ID" description="The ID of the parent record" default="{!recordId}" required="true"/>
+            <property name="parentObjectAPIName" type="String" label="Parent Object API Name" description="The API name of the parent object" default="Product2"/>
+            <property name="junctionObjectAPIName" type="String" label="Junction Object API Name" description="The API name of the junction object" default="" required="true"/>
+            <property name="junctionObjectToParentRelationship" type="String" label="Junction Object to Parent Relationship API Name" description="" default="Recommended_Product__r" required="true"/>
+            <property name="junctionObjectToChildRelationship" type="String" label="Junction Object to Child Relationship API Name" description="" default="Recommended_Product_Parent__r" required="true"/>
+            <property name="childObjectAPIName" type="String" label="Child Object API Name" description="The API name of the child object" default=""/>
+            <property name="headerText" type="String" label="Header Text" description="" default="Related"/>
+            <property name="tileMappingTitle" type="String" label="Mapping child field for Title" description="" default="Name"/>
+            <property name="showImage" type="Boolean" label="Show the child image" description="" default="TRUE" />
+            <property name="tileMappingImage" type="String" label="Mapping child field for Image" description="" default="Img_Src__c" />
+            <property name="takeImageFromMedia" type="Boolean" label="Take Image from Media" description="If checked, the image is taken from the Product2 list image (works only if the Child object is Product2" default="FALSE" />
+            <property name="tileMappingSubtitle" type="String" label="Mapping child field for Subtitle" description="" default="Description" />
+            <property name="columns" type="Integer" label="Number of columns" description="" min="1" max="6" default="3" />
+            <property name="childDetailPageBaseURL" type="String" label="Child detail page base URL" description="The base URL configured on the detail page settings" default="product" required="true" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
