@@ -10,34 +10,6 @@
     padding: 1em;
 }
 
-.child-tile.col-1 {
-    width: 100%;
-}
-
-.child-tile.col-2 {
-    width: 50%;
-}
-
-.child-tile.col-3 {
-    width: 33%;
-}
-
-.child-tile.col-4 {
-    width: 25%;
-}
-
-.child-tile.col-5 {
-    width: 20%;
-}
-
-.child-tile.col-6 {
-    width: 16%;
-}
-
-.child-tile img {
-    width: 100%;
-}
-
-.child-tile a {
-    padding: 1em;
+.list-item {
+    margin-bottom:1em;
 }

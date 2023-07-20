@@ -3,12 +3,29 @@
         <template if:true={childMappedData}>
             <h2>{headerText}</h2>
             <div class="child-container">
-                <template for:each={childMappedData} for:item="c">
-                    <div class={columnClass} key={c.Id} data-id={c.Id} onclick={navigateToChild}>
-                        <img src={c.Image} />
-                        <a href={c.Url}><h3>{c.Title}</h3></a>
-                        <p>{c.Subtitle}</p>
+                <template if:true={displayAsGrid}>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <template for:each={childMappedData} for:item="c">
+                            <div class={columnClass} key={c.Id} data-id={c.Id} onclick={navigateToChild}>
+                                <img src={c.Image} />
+                                <a href={c.Url}><h3>{c.Title}</h3></a>
+                                <p>{c.Subtitle}</p>
+                            </div>
+                        </template>
                     </div>
+                </template>
+                <template if:false={displayAsGrid}>
+                    <template for:each={childMappedData} for:item="c">
+                        <div class="slds-grid slds-wrap slds-gutters list-item" key={c.Id} data-id={c.Id} onclick={navigateToChild}>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                                <img src={c.Image} />
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_9-of-12">
+                                <a href={c.Url}><h3>{c.Title}</h3></a>
+                                <p>{c.Subtitle}</p>
+                            </div>
+                        </div>
+                    </template>
                 </template>
             </div>
         </template>

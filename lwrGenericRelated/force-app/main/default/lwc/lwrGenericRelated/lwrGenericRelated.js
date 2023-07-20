@@ -21,22 +21,35 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     @api tileMappingImage;
     @api takeImageFromMedia;
     @api tileMappingSubtitle;
+    @api displayAs;
     @api columns;
     @api childDetailPageBaseURL;
+    @api whereConditions;
+    @api additionalRelationshipObjectFields;
+    @api additionalChildObjectFields;
 
     @track childMappedData = [];
-    @track columnClass = "child-tile col-3";
+    //@track columnClass = "child-tile col-3";
+    @track columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12";
 
     childFields = [];
+    displayAsGrid = true;
 
     connectedCallback() {
         console.log("LwrGenericRelated::connected callback");
+
+        if (this.displayAs == "List") this.displayAsGrid = false;
+
         this.childFields.push(this.tileMappingTitle);
         if (!this.takeImageFromMedia) {
             this.childFields.push(this.tileMappingImage);
         }
         if (this.tileMappingSubtitle) {
             this.childFields.push(this.tileMappingSubtitle);
+        }
+        if (this.additionalChildObjectFields) {
+            var addChildFields = this.additionalChildObjectFields.split(",");
+            this.childFields.push(addChildFields);
         }
         this.initColumns();
     }
@@ -46,7 +59,8 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         junctionObjectApiName: '$junctionObjectAPIName',
         junctionToParentRelationshipApiName: '$junctionObjectToParentRelationship',
         junctionToChildRelationshipApiName: '$junctionObjectToChildRelationship',
-        fields: '$childFields'
+        fields: '$childFields',
+        whereConditions: '$whereConditions'
     })wiredData({error, data}) {
         console.log("wired children records");
         console.log(data);
@@ -65,22 +79,22 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     initColumns() {
         switch (this.columns) {
             case 1:
-                this.columnClass = "child-tile col-1";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12";
                 break;
             case 2:
-                this.columnClass = "child-tile col-2";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12";
                 break;
             case 3:
-                this.columnClass = "child-tile col-3";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12";
                 break;
             case 4:
-                this.columnClass = "child-tile col-4";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12";
                 break;
             case 5:
-                this.columnClass = "child-tile col-5";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_2-of-12";
                 break;
             case 6:
-                this.columnClass = "child-tile col-6";
+                this.columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_2-of-12";
                 break;
         }
     }
