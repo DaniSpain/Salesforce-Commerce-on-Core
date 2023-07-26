@@ -25,9 +25,12 @@
             <property name="displayAs" type="String" label="Display As" description="Display as Grid or List" default="Grid" datasource="Grid,List"/>
             <property name="columns" type="Integer" label="Number of columns" description="Number of columns to show (available only for Grid" min="1" max="6" default="3" />
             <property name="childDetailPageBaseURL" type="String" label="Child detail page base URL" description="The base URL configured on the detail page settings" default="product" required="true" />
-            <property name="whereConditions" type="String" label="Additional WHERE Conditions" description="Additional WHERE Conditions you want to apply on the child records" default="Recommended_Product__r.Name = 'test' AND Recommended_Product__r.Status = 'Active'" required="false" />
-            <property name="additionalRelationshipObjectFields" type="String" label="Additional Relationship Object Fields" description="Comma-Separated Additional Relationship Object Fields that you want to show for each element" default="" required="false" />
-            <property name="additionalChildObjectFields" type="String" label="Additional Child Object Fields" description="Comma-Separated Additional Child Object Fields that you want to show for each element" default="" required="false" />
+            <property name="whereConditions" type="String" label="Additional WHERE Conditions" description="Additional WHERE Conditions you want to apply on the child records (eg Recommended_Product__r.Name = 'test')" default="" required="false" />
+            <property name="additionalChildObjectFields" type="String" label="Additional Child Object Fields" description="Comma-Separated Child Object Fields that you want to show for each element" default="" required="false" />
+            <property name="additionalChildObjectFieldsLabels" type="String" label="Additional Child Object Field Labels" description="Comma-Separated Labels for the Child Object Fields that you want to show for each element. The order must be the same as the fields" default="" required="false" />
+            <property name="additionalRelationshipObjectFields" type="String" label="Additional Relationship Object Fields" description="Comma-Separated Relationship Object Fields that you want to show for each element" default="" required="false" />
+            <property name="additionalRelationshipObjectFieldsLabels" type="String" label="Additional Relationship Object Field Labels" description="Comma-Separated Labels for the Relationship Object Fields that you want to show for each element. The order must be the same as the fields" default="" required="false" />
+            <property name="additionalFields" type="String" label="Additional Fields (deprecated)" description="Use Additional Child Object Fields and/or Additional Relationship Object Fields instead" default="" required="false" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

@@ -6,23 +6,65 @@
                 <template if:true={displayAsGrid}>
                     <div class="slds-grid slds-wrap slds-gutters">
                         <template for:each={childMappedData} for:item="c">
-                            <div class={columnClass} key={c.Id} data-id={c.Id} onclick={navigateToChild}>
+                            <div class={columnClass} key={c.Id} data-id={c.Id}>
                                 <img src={c.Image} />
-                                <a href={c.Url}><h3>{c.Title}</h3></a>
-                                <p>{c.Subtitle}</p>
+                                <div style="padding: 1em;">
+                                    <a href={c.Url}><h3>{c.Title}</h3></a>
+                                    <p>{c.Subtitle}</p>
+                                    <template for:each={c.AddChildFields} for:item="f" >
+                                        <div class="slds-grid slds-wrap slds-gutters" key={f.Label}>
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                                <label>{f.Label}</label>
+                                            </div>
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                                <p>{f.Value}</p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template for:each={c.AddRelFields} for:item="f" >
+                                        <div class="slds-grid slds-wrap slds-gutters" key={f.Label}>
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                                <label>{f.Label}</label>
+                                            </div>
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                                <p>{f.Value}</p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </template>
                     </div>
                 </template>
                 <template if:false={displayAsGrid}>
                     <template for:each={childMappedData} for:item="c">
-                        <div class="slds-grid slds-wrap slds-gutters list-item" key={c.Id} data-id={c.Id} onclick={navigateToChild}>
+                        <div class="slds-grid slds-wrap slds-gutters list-item" key={c.Id} data-id={c.Id}>
                             <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
                                 <img src={c.Image} />
                             </div>
                             <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_9-of-12">
                                 <a href={c.Url}><h3>{c.Title}</h3></a>
                                 <p>{c.Subtitle}</p>
+                                <template for:each={c.AddChildFields} for:item="f" >
+                                    <div class="slds-grid slds-wrap slds-gutters" key={f.Label}>
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                            <label>{f.Label}</label>
+                                        </div>
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                            <p>{f.Value}</p>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template for:each={c.AddRelFields} for:item="f" >
+                                    <div class="slds-grid slds-wrap slds-gutters" key={f.Label}>
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                            <label>{f.Label}</label>
+                                        </div>
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                            <p>{f.Value}</p>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </template>

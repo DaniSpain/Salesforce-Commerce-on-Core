@@ -20,6 +20,7 @@ public without sharing class LwrGenericRelatedController {
         String junctionToParentRelationshipApiName, 
         String junctionToChildRelationshipApiName,
         String[] fields,
+        String[] relationshipFields,
         String whereConditions){
             Type t = Type.forName(junctionObjectApiName);
             SObject jobj = (SObject)t.newInstance();
@@ -35,9 +36,19 @@ public without sharing class LwrGenericRelatedController {
             for (integer i = 0; i<fields.size(); i++) {
               query += ' , ' + junctionToChildRelationshipApiName + '.' + fields[i];
             }
+
+            if (relationshipFields != null) {
+              for (integer i=0; i<relationshipFields.size(); i++) {
+                query += ' , ' + junctionObjectApiName + '.' + relationshipFields[i];
+              }
+            }
+
             query += ' FROM ' + junctionObjectApiName + 
-              ' WHERE ' + junctionToParentRelationshipApiName + '.Id = \'' + parentId + '\''; 
-            query += ' AND ' + whereConditions;
+              ' WHERE ' + junctionToParentRelationshipApiName + '.Id = \'' + parentId + '\'';
+              
+            if (whereConditions != null && whereConditions != '') {
+              query += ' AND ' + whereConditions;
+            }
 
             //String query = 
             //    'select Recommended_Product__r.Id, Recommended_Product__r.Name from Cross_Sell_Recommendations__c Where Recommended_Product_Parent__r.Id = \'' + parentId + '\'';

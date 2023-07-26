@@ -25,14 +25,25 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     @api columns;
     @api childDetailPageBaseURL;
     @api whereConditions;
+    @api additionalChildObjectFields
     @api additionalRelationshipObjectFields;
-    @api additionalChildObjectFields;
+    @api additionalChildObjectFieldsLabels;
+    @api additionalRelationshipObjectFieldsLabels;
+
+    //NOT USED ANYMORE
+    @api additionalFields;
 
     @track childMappedData = [];
     //@track columnClass = "child-tile col-3";
     @track columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12";
 
     childFields = [];
+    additionalChildFields = [];
+    relationshipFields = [];
+
+    additionalChildFieldLabels = [];
+    relationshipFieldLabels = [];
+
     displayAsGrid = true;
 
     connectedCallback() {
@@ -48,9 +59,19 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
             this.childFields.push(this.tileMappingSubtitle);
         }
         if (this.additionalChildObjectFields) {
-            var addChildFields = this.additionalChildObjectFields.split(",");
-            this.childFields.push(addChildFields);
+            this.additionalChildFields = this.additionalChildObjectFields.split(",");
+            this.childFields.push(this.additionalChildFields);
         }
+        if (this.additionalRelationshipObjectFields) {
+            this.relationshipFields = this.additionalRelationshipObjectFields.split(",");
+        }
+        if (this.additionalChildObjectFieldsLabels) {
+            this.childFieldLabels = this.additionalChildObjectFieldsLabels.split(",");
+        }
+        if (this.additionalRelationshipObjectFieldsLabels) {
+            this.relationshipFieldLabels = this.additionalRelationshipObjectFieldsLabels.split(",");
+        }
+        
         this.initColumns();
     }
 
@@ -60,6 +81,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         junctionToParentRelationshipApiName: '$junctionObjectToParentRelationship',
         junctionToChildRelationshipApiName: '$junctionObjectToChildRelationship',
         fields: '$childFields',
+        relationshipFields: '$relationshipFields',
         whereConditions: '$whereConditions'
     })wiredData({error, data}) {
         console.log("wired children records");
@@ -131,7 +153,9 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
                 Title: null,
                 Image: null,
                 Subtitle: null,
-                Url: null
+                Url: null,
+                AddChildFields: [],
+                AddRelFields: []
             };
             mappedDataItem.Id = dataItem[this.junctionObjectToChildRelationship].Id;
             console.log("LwrGenericRelated::mapFieldData::Mapping title => " + this.junctionObjectToChildRelationship + "." + this.tileMappingTitle);
@@ -139,6 +163,27 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
             mappedDataItem.Url = basePath + "/" + this.childDetailPageBaseURL + "/" + mappedDataItem.Id;
             mappedDataItem.Image = dataItem[this.junctionObjectToChildRelationship][this.tileMappingImage];
             mappedDataItem.Subtitle = dataItem[this.junctionObjectToChildRelationship][this.tileMappingSubtitle];
+            
+            if (this.additionalChildFields && this.additionalChildFields.length > 0) {
+                for (var i=0; i<this.additionalChildFields.length; i++) {
+                    var item = {
+                        Label: this.additionalChildFieldLabels[i],
+                        Value: dataItem[this.junctionObjectToChildRelationship][this.additionalChildFields[i]]
+                    }
+                    mappedDataItem.AddChildFields.push(item);
+                }
+            }
+
+            if (this.relationshipFields && this.relationshipFields.length > 0) {
+                for (var i=0; i<this.relationshipFields.length; i++) {
+                    var item = {
+                        Label: this.relationshipFieldLabels[i],
+                        Value: dataItem[this.relationshipFields[i]]
+                    }
+                    mappedDataItem.AddRelFields.push(item);
+                }
+            }
+
             childIds.push(mappedDataItem.Id);
             this.childMappedData.push(mappedDataItem);
         }
@@ -159,6 +204,9 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
                 for (var i=0; i<data.length; i++) {
                     this.childMappedData[i].Image = data[i].defaultImage.url;
                 }
+
+                console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
+                console.log(this.childMappedData);
             })
             .catch(error => {
                 console.error("LwrGenericRelated::mapFieldData::getCommerceProducts::error");
