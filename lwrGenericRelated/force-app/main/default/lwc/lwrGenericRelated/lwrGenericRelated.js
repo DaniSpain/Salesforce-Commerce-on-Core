@@ -60,7 +60,9 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         }
         if (this.additionalChildObjectFields) {
             this.additionalChildFields = this.additionalChildObjectFields.split(",");
-            this.childFields.push(this.additionalChildFields);
+            for (var i=0; i<this.additionalChildFields.length; i++) {
+                this.childFields.push(this.additionalChildFields[i]);
+            }
         }
         if (this.additionalRelationshipObjectFields) {
             this.relationshipFields = this.additionalRelationshipObjectFields.split(",");
@@ -165,25 +167,27 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
             mappedDataItem.Subtitle = dataItem[this.junctionObjectToChildRelationship][this.tileMappingSubtitle];
             
             if (this.additionalChildFields && this.additionalChildFields.length > 0) {
-                for (var i=0; i<this.additionalChildFields.length; i++) {
+                for (var j=0; j<this.additionalChildFields.length; j++) {
                     var item = {
-                        Label: this.additionalChildFieldLabels[i],
-                        Value: dataItem[this.junctionObjectToChildRelationship][this.additionalChildFields[i]]
+                        Label: this.additionalChildFieldLabels[j],
+                        Value: dataItem[this.junctionObjectToChildRelationship][this.additionalChildFields[j]]
                     }
                     mappedDataItem.AddChildFields.push(item);
                 }
             }
 
             if (this.relationshipFields && this.relationshipFields.length > 0) {
-                for (var i=0; i<this.relationshipFields.length; i++) {
+                for (var j=0; j<this.relationshipFields.length; j++) {
                     var item = {
-                        Label: this.relationshipFieldLabels[i],
-                        Value: dataItem[this.relationshipFields[i]]
+                        Label: this.relationshipFieldLabels[j],
+                        Value: dataItem[this.relationshipFields[j]]
                     }
                     mappedDataItem.AddRelFields.push(item);
                 }
             }
 
+            console.log("LwrGenericRelated::mapFieldData::Mapped Data Item");
+            console.log(mappedDataItem);
             childIds.push(mappedDataItem.Id);
             this.childMappedData.push(mappedDataItem);
         }
