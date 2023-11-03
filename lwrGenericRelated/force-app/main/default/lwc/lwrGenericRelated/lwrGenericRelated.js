@@ -64,15 +64,26 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
                 this.childFields.push(this.additionalChildFields[i]);
             }
         }
+        console.log("LwrGenericRelated::connectedCallback::childFields");
+        console.log(this.childFields);
+
         if (this.additionalRelationshipObjectFields) {
             this.relationshipFields = this.additionalRelationshipObjectFields.split(",");
         }
+        console.log("LwrGenericRelated::connectedCallback::relationshipFields");
+        console.log(this.relationshipFields);
+
         if (this.additionalChildObjectFieldsLabels) {
             this.additionalChildFieldLabels = this.additionalChildObjectFieldsLabels.split(",");
         }
+        console.log("LwrGenericRelated::connectedCallback::additionalChildFieldLabels");
+        console.log(this.additionalChildFieldLabels);
+
         if (this.additionalRelationshipObjectFieldsLabels) {
             this.relationshipFieldLabels = this.additionalRelationshipObjectFieldsLabels.split(",");
         }
+        console.log("LwrGenericRelated::connectedCallback::relationshipFieldLabels");
+        console.log(this.relationshipFieldLabels);
         
         this.initColumns();
     }

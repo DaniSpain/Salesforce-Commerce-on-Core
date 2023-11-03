@@ -12,7 +12,7 @@
                                     <a href={c.Url}><h3>{c.Title}</h3></a>
                                     <p>{c.Subtitle}</p>
                                     <template for:each={c.AddChildFields} for:item="cf" >
-                                        <div class="slds-grid slds-wrap slds-gutters" key={f.Label}>
+                                        <div class="slds-grid slds-wrap slds-gutters" key={cf.Label}>
                                             <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
                                                 <label>{cf.Label}</label>
                                             </div>
