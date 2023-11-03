@@ -68,7 +68,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
             this.relationshipFields = this.additionalRelationshipObjectFields.split(",");
         }
         if (this.additionalChildObjectFieldsLabels) {
-            this.childFieldLabels = this.additionalChildObjectFieldsLabels.split(",");
+            this.additionalChildFieldLabels = this.additionalChildObjectFieldsLabels.split(",");
         }
         if (this.additionalRelationshipObjectFieldsLabels) {
             this.relationshipFieldLabels = this.additionalRelationshipObjectFieldsLabels.split(",");
