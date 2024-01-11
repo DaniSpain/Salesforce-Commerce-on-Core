@@ -1,5 +1,7 @@
 import { LightningElement, wire, api, track } from 'lwc';
 import { getAppContext, getSessionContext } from "commerce/contextApi";
+//import { CartSummaryAdapter } from 'commerce/cartApi';
+import Id from "@salesforce/user/Id";
 
 //import { effectiveAccount } from 'commerce/effectiveAccountApi';
 
@@ -8,6 +10,9 @@ import getCarts from '@salesforce/apex/CartSwitcherController.getCarts';
 import createCart from '@salesforce/apex/CartSwitcherController.createCart';
 import setPrimaryCart from '@salesforce/apex/CartSwitcherController.setPrimaryCart';
 import deleteCart from '@salesforce/apex/CartSwitcherController.deleteCart';
+import takeOwnership from '@salesforce/apex/CartSwitcherController.takeOwnership';
+import releaseOwnership from '@salesforce/apex/CartSwitcherController.releaseOwnership';
+import shareCart from '@salesforce/apex/CartSwitcherController.shareCart';
 
 export default class B2bleCartSwitcher extends LightningElement {
     @api effectiveAccountId;
@@ -17,8 +22,10 @@ export default class B2bleCartSwitcher extends LightningElement {
 
     @track showDeleteModal = false;
     @track showCreateModal = false;
+    //@track currentCart;
 
     orderOptions = [];
+    userId = Id;
 
     connectedCallback() {
         if (this.cartTypes!=null) {
@@ -57,6 +64,21 @@ export default class B2bleCartSwitcher extends LightningElement {
             this.getAccountCarts();
         }
     }
+
+    /*
+    @wire(CartSummaryAdapter)
+    cartSummaryHandler(response) {
+        if (response.data) {
+            console.log("Account Switch::CartSummaryAdapter::Got Data");
+            console.log(response.data);
+            this.currentCart = response.data.cartId;
+            console.log("Current Cart: " + this.currentCart);
+        } else if (response.error) {
+            console.error("Account Switch::CartSummaryAdapter::error");
+            console.error(response.error);
+        }
+    }
+    */
 
     getAccountCarts() {
         console.log("Effective account id: " + this.effectiveAccountId);
@@ -112,26 +134,61 @@ export default class B2bleCartSwitcher extends LightningElement {
         setPrimaryCart({
             communityId: communityId,
             effectiveAccountId: this.effectiveAccountId,
-            cartId: cartId
+            cartId: cartId,
         }).then(result => {
             console.log("activated cart");
-            //if we are in the cart page we should reload the richt cart
-            /*
-            if (window.location.href.indexOf("/cart") >= 0) {
-                var locParts = window.location.href.split("/");
-                locParts[locParts.length-1] = cartId;
-                var newUrl = locParts.join("/");
-                window.location.replace(newUrl);
-            } else {
-                //in other pages we just refresh the location
-                window.location.reload();
-            }
-            */
             window.location.reload();
-            
         })
         .catch(err => {
             console.error("Error making the cart " + cartId + " primary");
+            console.error(err);
+        });
+    }
+
+    takeCartOwnership(evt) {
+        var cartId = evt.currentTarget.dataset.id;
+        takeOwnership({
+            communityId: communityId,
+            effectiveAccountId: this.effectiveAccountId,
+            cartId: cartId,
+        }).then(result => {
+            console.log("cart ownership taken");
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error("Error taking cart ownership for cart: " + cartId);
+            console.error(err);
+        });
+    }
+
+    releaseCartOwnership(evt) {
+        var cartId = evt.currentTarget.dataset.id;
+        releaseOwnership({
+            communityId: communityId,
+            effectiveAccountId: this.effectiveAccountId,
+            cartId: cartId,
+        }).then(result => {
+            console.log("cart ownership released");
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error("Error releasing cart ownership for cart: " + cartId);
+            console.error(err);
+        });
+    }
+
+    shareCartOwnership(evt) {
+        var cartId = evt.currentTarget.dataset.id;
+        shareCart({
+            communityId: communityId,
+            effectiveAccountId: this.effectiveAccountId,
+            cartId: cartId,
+        }).then(result => {
+            console.log("cart shared successfully");
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error("Error sharing the cart: " + cartId);
             console.error(err);
         });
     }
@@ -160,9 +217,4 @@ export default class B2bleCartSwitcher extends LightningElement {
             console.error(err);
         });
     }
-
-    viewCartItems() {
-        //open a modal showing the cart items
-    }
-
 }

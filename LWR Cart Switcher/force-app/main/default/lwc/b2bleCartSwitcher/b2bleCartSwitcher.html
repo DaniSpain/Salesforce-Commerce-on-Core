@@ -15,7 +15,7 @@
                         <div class="slds-truncate" title="Cart Total">Cart Total</div>
                     </th>
                     <th class="" scope="col">
-                        <div class="slds-truncate" title="Current">Current</div>
+                        <div class="slds-truncate" title="Active">Active</div>
                     </th>
                     <th class="" scope="col">
                         <div class="slds-truncate" title="Actions">Actions</div>
@@ -34,11 +34,19 @@
                             </template>
                         </td>
                         <td>
+                            <template if:false={c.ownedByCurrentUser}>
+                                <lightning-button data-id={c.id} variant="brand" label="Take Ownership" title="Take Ownership" onclick={takeCartOwnership} class="slds-m-left_x-small"></lightning-button>
+                            </template>
                             <template if:true={c.cartSummary.isSecondary}>
-                                <lightning-button data-id={c.id} variant="brand" label="Switch Cart" title="Switch Cart" onclick={switchToCart} class="slds-m-left_x-small"></lightning-button>
+                                <lightning-button data-id={c.id} variant="brand" label="Make Active" title="Make Active" onclick={switchToCart} class="slds-m-left_x-small"></lightning-button>
+                            </template>
+                            <template if:true={c.ownershipTaken}>
+                                <lightning-button data-id={c.id} variant="brand" label="Release Ownership" title="Release Ownership" onclick={releaseCartOwnership} class="slds-m-left_x-small"></lightning-button>
+                            </template>
+                            <template if:false={c.isShared}>
+                                <lightning-button data-id={c.id} variant="brand" label="Share" title="Share" onclick={shareCartOwnership} class="slds-m-left_x-small"></lightning-button>
                             </template>
                             <lightning-button data-id={c.id} variant="brand" label="Delete Cart" title="Delete Cart" onclick={openDeleteModal} class="slds-m-left_x-small"></lightning-button>
-                            <lightning-button data-id={c.id} variant="brand" label="Review Items" title="Review Items" onclick={viewCartItems} class="slds-m-left_x-small"></lightning-button>
                         </td>
                     </tr>
                 </template>

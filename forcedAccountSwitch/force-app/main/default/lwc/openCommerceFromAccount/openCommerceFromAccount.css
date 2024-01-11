@@ -1,0 +1,14 @@
+div.button {
+    padding: 1em;
+    padding: 1em;
+    background-color: #009edb;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+div.button a {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.3em;
+}

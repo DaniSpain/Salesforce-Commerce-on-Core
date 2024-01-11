@@ -1,4 +1,18 @@
 <template>
+
+    <div class="toast-container" if:true={displayToast}>
+        <div class={toastClass}>
+            <div class="toast-icon"><lightning-icon icon-name={toastIconName} class="notify-icon"></lightning-icon></div>
+            <div class="error-text">
+                <div class="toast-heading">{toastTitle}</div>
+                <div class="toast-message">{toastMessage}</div>
+            </div>
+            <div class="toast-close" onclick={closeToast} id="close">
+                <lightning-icon icon-name="utility:close" alternative-text="Close" class="notify-icon"></lightning-icon>
+            </div>
+        </div>
+    </div>
+
     <div>
         <template if:true={childMappedData}>
             <h2>{headerText}</h2>
@@ -31,6 +45,16 @@
                                             </div>
                                         </div>
                                     </template>
+                                    <template if:true={showAddToCart}>
+                                        <div class="slds-grid slds-wrap slds-gutters">
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                                <lightning-input type="number" name={c.Title} data-id={c.Id} value="1" min="1" onchange={handleItemQtyChange}></lightning-input>
+                                            </div>
+                                            <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" style="margin-top: 1.4em">
+                                                <lightning-button variant="brand" data-id={c.Id} label="Add to cart" title="Add to cart" onclick={addToCart} class="slds-m-left_x-small"></lightning-button>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -39,10 +63,10 @@
                 <template if:false={displayAsGrid}>
                     <template for:each={childMappedData} for:item="c">
                         <div class="slds-grid slds-wrap slds-gutters list-item" key={c.Id} data-id={c.Id}>
-                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12 slds-large-size_3-of-12">
                                 <img src={c.Image} />
                             </div>
-                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_9-of-12">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
                                 <a href={c.Url}><h3>{c.Title}</h3></a>
                                 <p>{c.Subtitle}</p>
                                 <template for:each={c.AddChildFields} for:item="f" >
@@ -66,6 +90,18 @@
                                     </div>
                                 </template>
                             </div>
+                            <template if:true={showAddToCart}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12 slds-large-size_3-of-12">
+                                    <div class="slds-grid slds-wrap slds-gutters">
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                                            <lightning-input type="number" name={c.Title} data-id={c.Id} value="1" onchange={handleItemQtyChange} min="1"></lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_6-of-12 slds-medium-size_6-of-12 slds-large-size_6-of-12" style="margin-top: 1.4em">
+                                            <lightning-button variant="brand" data-id={c.Id} label="Add to cart" title="Add to cart" onclick={addToCart} class="slds-m-left_x-small"></lightning-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </template>
                 </template>

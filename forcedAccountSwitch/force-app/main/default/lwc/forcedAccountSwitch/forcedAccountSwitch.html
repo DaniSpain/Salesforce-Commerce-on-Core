@@ -1,0 +1,8 @@
+<template>
+    <template lwc:if={account.data}>
+        <p>{label} <b>{name}</b> ({newEffectiveAccountId})</p>
+    </template>
+    <template lwc:else> 
+        <p>YOU ARE ORDERING FOR: <b>Example Account Name</b> (accountid)</p>
+    </template>
+</template>

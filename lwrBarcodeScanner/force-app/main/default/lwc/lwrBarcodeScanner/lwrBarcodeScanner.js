@@ -1,15 +1,22 @@
 import { LightningElement, track, api } from "lwc";
 import { getBarcodeScanner } from "lightning/mobileCapabilities";
+import { NavigationMixin } from 'lightning/navigation';
 import communityId from '@salesforce/community/Id';
 import addToCart from '@salesforce/apex/CommerceBarcodeScannerController.addToCart';
 
-export default class LwrBarcodeScanner extends LightningElement {
+export default class LwrBarcodeScanner extends NavigationMixin(LightningElement) {
   barcodeScanner;
   @track scannedBarcodes;
   @api productField;
+  @api objectAPIName;
+
+  @track showAddToCart = false;
+  @track showOpenAsset = false;
 
   connectedCallback() {
     this.barcodeScanner = getBarcodeScanner();
+    if (this.objectAPIName == "Product2") this.showAddToCart = true;
+    if (this.objectAPIName == "Asset") this.showOpenAsset = true;
   }
 
   beginScanning() {
@@ -79,4 +86,17 @@ export default class LwrBarcodeScanner extends LightningElement {
       alert("error adding to cart: " + JSON.stringify(error));
     })
   }
+
+  goToRecord(evt) {
+    alert("Navingating to record");
+    this[NavigationMixin.Navigate]({
+      type: 'standard__recordPage',
+      attributes: {
+          objectApiName: "Asset",
+          recordId: '02i07000000s2JHAAY',
+          actionName: 'view',
+      },
+    });
+  }
+    
 }

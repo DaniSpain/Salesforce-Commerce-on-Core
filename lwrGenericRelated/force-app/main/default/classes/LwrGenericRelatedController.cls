@@ -58,11 +58,11 @@ public without sharing class LwrGenericRelatedController {
     }
 
     @AuraEnabled(cacheable = false)
-    public static List<ConnectApi.ProductOverview> getCommerceProducts(String communityId, String[] productIds){
+    public static List<ConnectApi.ProductOverview> getCommerceProducts(String communityId, String[] productIds, String effectiveAccountId){
         String webstoreId = resolveCommunityIdToWebstoreId(communityId);
         
         //getProducts(webstoreId, effectiveAccountId, ids, skus, fields, excludeMedia, excludePrices)
-        ConnectApi.ProductOverviewCollection productCollection = ConnectApi.CommerceCatalog.getProducts(webstoreId,null,productIds,null,null,false,false);
+        ConnectApi.ProductOverviewCollection productCollection = ConnectApi.CommerceCatalog.getProducts(webstoreId,effectiveAccountId,productIds,null,null,false,false);
         List<ConnectApi.ProductOverview> productOverviews = productCollection.products;
         return productOverviews;
     }

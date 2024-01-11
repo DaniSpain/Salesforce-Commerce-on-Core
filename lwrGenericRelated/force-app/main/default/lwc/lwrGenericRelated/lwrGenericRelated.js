@@ -3,10 +3,15 @@ import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import basePath from '@salesforce/community/basePath';
 import communityId from '@salesforce/community/Id';
+import { getAppContext, getSessionContext } from "commerce/contextApi";
 
 import getParentRecord from '@salesforce/apex/LwrGenericRelatedController.getParent';
 import getChildrenRecord from '@salesforce/apex/LwrGenericRelatedController.getChildren';
 import getCommerceProducts from '@salesforce/apex/LwrGenericRelatedController.getCommerceProducts';
+import { addItemToCart } from 'commerce/cartApi';
+
+const ADD_PRODUCT_TO_CART_EVT = 'addproducttocart';
+const CART_CHANGED_EVT = 'cartchanged';
 
 export default class LwrGenericRelated extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -29,6 +34,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     @api additionalRelationshipObjectFields;
     @api additionalChildObjectFieldsLabels;
     @api additionalRelationshipObjectFieldsLabels;
+    @api showAddToCart;
 
     //NOT USED ANYMORE
     @api additionalFields;
@@ -45,6 +51,29 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     relationshipFieldLabels = [];
 
     displayAsGrid = true;
+
+    prodQtys = {};
+    effectiveAccountId;
+
+    //toast variables
+    displayToast = false;
+    toastClass;
+    toastIconName;
+    toastTitle;
+    toastMessage;
+
+    closeToast() {
+        this.displayToast = false;
+    }
+
+    showToast(title, message, variant) {
+        this.toastTitle = title;
+        this.toastMessage = message;
+        this.toastClass = "toast toast-" + variant;
+        this.toastIconName = variant == "success" ? "utility:success" : "utility:error";
+        this.displayToast = true;
+    }
+
 
     connectedCallback() {
         console.log("LwrGenericRelated::connected callback");
@@ -84,6 +113,13 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         }
         console.log("LwrGenericRelated::connectedCallback::relationshipFieldLabels");
         console.log(this.relationshipFieldLabels);
+
+        //we check that the add to cart is set to true only for Product2 object
+        if (this.showAddToCart && this.childObjectAPIName == 'Product2') {
+            this.showAddToCart = true;
+        } else {
+            this.showAddToCart = false;
+        }
         
         this.initColumns();
     }
@@ -95,7 +131,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         junctionToChildRelationshipApiName: '$junctionObjectToChildRelationship',
         fields: '$childFields',
         relationshipFields: '$relationshipFields',
-        whereConditions: '$whereConditions'
+        whereConditions: '$whereConditions',
     })wiredData({error, data}) {
         console.log("wired children records");
         console.log(data);
@@ -163,6 +199,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         for (var i=0; i<data.length; i++) {
             var dataItem = data[i];
             var mappedDataItem = {
+                Id: null,
                 Title: null,
                 Image: null,
                 Subtitle: null,
@@ -208,26 +245,65 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
 
         //we control if the child object is a Product2 and, if yes, we get the info from Commerce APIs
         if (this.takeImageFromMedia) {
-            getCommerceProducts({
-                communityId: communityId,
-                productIds: childIds
-            }).then(data => {
-                console.log("LwrGenericRelated::mapFieldData::getCommerceProducts::Got Commerce Products");
-                console.log(data);
+            Promise.all([ getSessionContext()]).then((sessionContext) => {
+                console.log("session context");
+                console.log(sessionContext);
+                console.log("setting effective account from API: " + sessionContext[0].effectiveAccountId);
+                this.effectiveAccountId = sessionContext[0].effectiveAccountId ? sessionContext[0].effectiveAccountId : null;
 
-                //now we decorate the mapped fields with the image
-                for (var i=0; i<data.length; i++) {
-                    this.childMappedData[i].Image = data[i].defaultImage.url;
-                }
+                getCommerceProducts({
+                    communityId: communityId,
+                    productIds: childIds,
+                    effectiveAccountId: this.effectiveAccountId
+                }).then(data => {
+                    console.log("LwrGenericRelated::mapFieldData::getCommerceProducts::Got Commerce Products");
+                    console.log(data);
+    
+                    //now we decorate the mapped fields with the image
+                    for (var i=0; i<data.length; i++) {
+                        this.childMappedData[i].Image = data[i].defaultImage.url;
+                    }
+    
+                    console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
+                    console.log(this.childMappedData);
+                })
+                .catch(error => {
+                    console.error("LwrGenericRelated::mapFieldData::getCommerceProducts::error");
+                    console.error(error);
+                })
+            });
+        }
+    }
 
-                console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
-                console.log(this.childMappedData);
+    handleItemQtyChange(event) {
+        console.log("Quantity Changed");
+        var prodId = event.currentTarget.dataset.id;
+        console.log("Product ID: " + prodId);
+        var qty = event.target.value != "" ? event.target.value : "0";
+        console.log("Qty: " + qty);
+
+        this.prodQtys[prodId] = qty;
+    }
+
+    addToCart(event) {
+        console.log("Add to cart");
+        var prodId = event.currentTarget.dataset.id;
+        console.log("Product ID: " + prodId);
+        var qty = this.prodQtys[prodId];
+        
+        addItemToCart(prodId, qty)
+            .then(() => {
+                console.log("Successfully added to the cart");
+                this.showToast(
+                    "Success",
+                    "Your cart have been updated",
+                    "success"
+                )
             })
             .catch(error => {
-                console.error("LwrGenericRelated::mapFieldData::getCommerceProducts::error");
+                console.error("error adding to the cart");
                 console.error(error);
-            })
-        }
+            });
     }
 
     /*

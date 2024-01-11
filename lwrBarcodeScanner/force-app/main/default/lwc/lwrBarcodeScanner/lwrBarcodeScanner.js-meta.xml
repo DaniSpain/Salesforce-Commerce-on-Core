@@ -10,7 +10,8 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightningCommunity__Default">
-            <property name="productField" type="String" label="Product Field API Name" description="The API name of the Product2 field you want to map the scanned barcode to find the product" default="StockKeepingUnit"/>
+            <property name="objectAPIName" type="String" label="Object API Name" description="The API name of the object where you want to lookup the scanned barcode" default="Product2"/>
+            <property name="productField" type="String" label="Field API Name" description="The API name of the object field you want to map the scanned barcode to find the product" default="EAN__c"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

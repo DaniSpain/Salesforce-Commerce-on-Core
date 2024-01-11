@@ -26,7 +26,12 @@
       <div class="slds-var-m-vertical_large slds-var-p-vertical_medium slds-border_top slds-border_bottom">
         <p>Scanned barcode values are:</p>
         <pre>{scannedBarcodesAsString}</pre>
+        <!--<template lwc:if={showOpenAsset}>-->
+          <lightning-button variant="brand" label="Open" title="Open" onclick={goToRecord} data-barcode={scannedBarcodesAsString} class="slds-m-left_x-small"></lightning-button>
+        <!--</template>-->
       </div>
-      <lightning-button variant="brand" label="Add All to Cart" title="Add All to Cart" onclick={addToCart} class="slds-m-left_x-small"></lightning-button>
+      <!--<template lwc:if={showAddToCart}>-->
+        <lightning-button variant="brand" label="Add All to Cart" title="Add All to Cart" onclick={addToCart} class="slds-m-left_x-small"></lightning-button>
+      <!--</template>-->
     </template>
   </template>

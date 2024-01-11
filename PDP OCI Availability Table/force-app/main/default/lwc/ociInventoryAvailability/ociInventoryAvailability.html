@@ -1,0 +1,63 @@
+<template>
+    <h3>Omnichannel Inventory</h3>
+    <br/>
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Location">Location</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Available to Fulfill">Available to Fulfill</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Available to Order">Available to Order</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Qty on Hand">Qty on Hand</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Effective Date">Effective Date</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Future">Future</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+            <template for:each={locations} for:item="loc">
+                <tr class="slds-hint-parent" key={loc.locationIdentifier}>
+                    <template for:each={loc.inventoryRecords} for:item="inv">
+                        <th data-label="Location" scope="row" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate" title={loc.locationIdentifier}>
+                                <a href="#" tabindex="-1">{loc.locationName}</a>
+                            </div>
+                        </th>
+                        <td data-label="Available to Fulfill" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate">{inv.availableToFulfill}</div>
+                        </td>
+                        <td data-label="Available to Order" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate">{inv.availableToOrder}</div>
+                        </td>
+                        <td data-label="Qty on Hand" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate">{inv.onHand}</div>
+                        </td>
+                            <td data-label="Effective Date" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate">
+                                <lightning-formatted-date-time value={inv.effectiveDate}></lightning-formatted-date-time>
+                            </div>
+                        </td>
+                        <td data-label="Future" key={inv.stockKeepingUnit}>
+                            <div class="slds-truncate">
+                                <lightning-icon icon-name="utility:budget_period"
+                                    alternative-text="info"
+                                    variant="inverse"
+                                    size="small" ></lightning-icon>
+                                </div>
+                        </td>
+                    </template>
+                  </tr>
+            </template>
+        </tbody>
+    </table>
+</template>

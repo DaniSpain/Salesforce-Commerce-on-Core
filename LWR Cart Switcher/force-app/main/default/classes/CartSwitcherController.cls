@@ -4,7 +4,7 @@ public class CartSwitcherController {
     public static List<CartWrapper> getCarts(String communityId, String effectiveAccountId) {
         String webstoreId = resolveCommunityIdToWebstoreId(communityId);
         
-        List<WebCart> carts = [SELECT Id, Name, Order_Type__c 
+        List<WebCart> carts = [SELECT Id, Name, Order_Type__c, OwnerId, isSecondary, Old_Owner__c, Shared__c
                                FROM WebCart 
                                WHERE AccountId = :effectiveAccountId AND Status = 'Active' AND WebStoreId = :webstoreId];
 
@@ -19,6 +19,21 @@ public class CartSwitcherController {
             cw.id = cart.Id;
             cw.cart = cart;
             cw.cartSummary = cartSummary;
+
+            if (UserInfo.getUserId() == cart.OwnerId) {
+              cw.ownedByCurrentUser = true;
+            } else {
+              cw.ownedByCurrentUser = false;
+            }
+
+            if (cart.Old_Owner__c != null) {
+              cw.ownershipTaken = true;
+            } else {
+              cw.ownershipTaken = false;
+            }
+            
+
+            cw.isShared = cart.Shared__c;
             cartWrappers.add(cw);
         }
         return cartWrappers;
@@ -43,6 +58,74 @@ public class CartSwitcherController {
         ConnectApi.CommerceActionResult result = ConnectApi.CommerceCart.makeCartPrimary(webstoreId, cartId, effectiveAccountId);
         return result;
     }
+
+    @AuraEnabled(cacheable=false)
+    public static void takeOwnership(String communityId, String effectiveAccountId, String cartId) {
+        String webstoreId = resolveCommunityIdToWebstoreId(communityId);
+        
+        //first we make all the carts secondary
+        List<WebCart> carts = [SELECT Id, Name, IsSecondary, Order_Type__c 
+          FROM WebCart 
+          WHERE AccountId = :effectiveAccountId AND Status = 'Active' AND WebStoreId = :webstoreId];
+        for (WebCart cart : carts) {
+          cart.isSecondary = true;
+        }
+        update carts;
+        
+        //set the ownership to the new user
+        WebCart wc = [SELECT Id, isSecondary, OwnerId, Old_Owner__c 
+          FROM WebCart WHERE Id = :cartId][0];
+        String oldOwner = wc.OwnerId;
+        wc.Old_Owner__c = oldOwner;
+        wc.OwnerId = UserInfo.getUserId();
+        update wc;
+
+        //share the cart with the old user
+        /*
+        if (oldOwner != UserInfo.getUserId()) {
+          WebCartShare wcShare = new WebCartShare();
+          wcShare.ParentId = wc.Id;
+          wcShare.AccessLevel = 'edit';
+          wcShare.UserOrGroupId = oldOwner;
+          wcShare.RowCause = Schema.WebCartShare.RowCause.Manual;
+          insert wcShare;
+        }
+        */
+
+        //we set this cart as the primary
+        ConnectApi.CommerceActionResult result = ConnectApi.CommerceCart.makeCartPrimary(webstoreId, cartId, effectiveAccountId);
+    }
+
+    @AuraEnabled(cacheable=false)
+    public static void shareCart(String communityId, String effectiveAccountId, String cartId) {
+        //set the cart as shared, the sharing rules will be created in the trigger
+        WebCart cart = [SELECT Id, Shared__c FROM WebCart WHERE Id = :cartId][0];
+        cart.Shared__c = true;
+        update cart;
+    }
+
+    @AuraEnabled(cacheable=false)
+    public static void releaseOwnership(String communityId, String effectiveAccountId, String cartId) {        
+        //set the ownership to the new user and make the card secondary
+        WebCart wc = [SELECT Id, isSecondary, OwnerId, Old_Owner__c, Shared__c 
+          FROM WebCart WHERE Id = :cartId][0];
+        String currentOwner = wc.OwnerId;
+        wc.OwnerId = wc.Old_Owner__c;
+        wc.Old_Owner__c = null;
+        wc.isSecondary = true;
+        wc.Shared__c = false;
+        update wc;
+
+        //adding a sharing rule to keep visibility on the cart for the current user
+        /*
+        WebCartShare wcShare = new WebCartShare();
+        wcShare.ParentId = wc.Id;
+        wcShare.AccessLevel = 'edit';
+        wcShare.UserOrGroupId = UserInfo.getUserId();
+        wcShare.RowCause = Schema.WebCartShare.RowCause.Manual;
+        insert wcShare;
+        */
+    }
     
     @AuraEnabled(cacheable=false)
     public static void deleteCart(String communityId, String effectiveAccountId, String cartId) {
@@ -55,6 +138,12 @@ public class CartSwitcherController {
         public String id {get; set;}
         @AuraEnabled
         public WebCart cart {get; set;}
+        @AuraEnabled
+        public Boolean ownedByCurrentUser {get; set;}
+        @AuraEnabled
+        public Boolean ownershipTaken {get; set;}
+        @AuraEnabled
+        public Boolean isShared {get; set;}
         @AuraEnabled
         public ConnectApi.CartSummary cartSummary {get; set;}
     }
