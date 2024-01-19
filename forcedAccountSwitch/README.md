@@ -16,3 +16,5 @@ NOTE: you can also put this component in other pages, it only forces a different
 ## Additional Notes
 * The partner user must be configured as a valid user both for the partner community and the b2b commerce store
 * Behind the scenes it uses the standard "Account Switch" methodology so make sure that you configure properly the External Managed Accounts on the partner account (the account related to the partner user e.g. the account related to Paul Partner in the SDO) configuring all the sub accounts you want to show the OOBO scenarios
+
+[Unmanaged Package Installation](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t07000000xcaV)
