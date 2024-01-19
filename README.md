@@ -13,8 +13,13 @@ This collection currently contains
 * [LWR Generic Related Component](https://github.com/DaniSpain/Salesforce-Commerce-on-Core/tree/main/lwrGenericRelated) A component that can be used in LWR websites to show any kind of related object in a catalog-like format
 
 ## Additional Resources
-If you are looking for the base components used in Salesforce B2B Commerce you can refer to this repositories provided by Salesforce:
+If you are looking for all the base components or official examples and guidelines used in Salesforce B2B/D2C Commerce you can refer to this repositories provided by Salesforce:
 * [Commerce Extensibility Framework](https://github.com/forcedotcom/commerce-extensibility) Use this repository to find examples on how to use the Extension framework to extend pricing, taxes, inventory, etc capabilities
 * [Commerce on Lightning Components](https://github.com/forcedotcom/commerce-on-lightning-components) A library to the reference implementation for the standard B2B and D2C Commerce on LWR framweork  Lightning Web Components
 * [Commerce on Lightning](https://github.com/forcedotcom/commerce-on-lightning/) Another repository with additional examples on components, classes and more for B2B, D2C and SOM (Salesforce Order Manager)
 * [B2B Commerce Lightning (Aura) Quick Start](https://github.com/forcedotcom/b2b-commerce-on-lightning-quickstart/) A remopistory containing examples regarding B2b Commerce Lightning Aura implementation (NOTE: for new project is highly recommended to use LWR instead, in taht case you can ignore this repo)
+
+# Additional Documentation
+* [Salesforce B2B/D2C Commerce Help](https://help.salesforce.com/s/articleView?id=sf.comm_intro.htm&type=5)
+* [Salesforce B2B/D2C Commerce Developer Documentation](https://developer.salesforce.com/docs/atlas.en-us.b2b_b2c_comm_dev.meta/b2b_b2c_comm_dev/b2b_b2c_comm_dev_guide.htm)
+* [Salesforce B2B/D2C Extension Developer Guide](https://developer.salesforce.com/docs/commerce/salesforce-commerce/guide/extensions.html)
