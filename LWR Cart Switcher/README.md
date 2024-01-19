@@ -1,18 +1,19 @@
-# Salesforce DX Project: Next Steps
+[Install Package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t07000000xcap)
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This component will give your customers the opportunity to manage different active carts and change between them during the commerce experience.
 
-## How Do You Plan to Deploy Your Changes?
+## UPDATE 19 JAN 2024 - SHARING CAPABILITY ADDED
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+With this update a new **SHARING** capability have been added.
 
-## Configure Your Salesforce DX Project
+Now each cart has the **"Share"** button that shares the visibility of the car with every user that might have access to the Account that owns the Cart (through External Managed Accounts for instance).
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+Once a Cart is shared a **"Take Ownership"** button si displayed to each use that can see the cart and this way they can take ownership of them, make changes, and then release the ownership (if needed) with the "Release Ownership" button to give back the cart to the original owner.
 
-## Read All About It
+## UPDATE 5 JUL 2023 - LWR STOREFRONTS
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+If you want to us this component on LWR website an update must be done since (currently) the CurrentUser.effectiveAccountId is not an available parameter in LWR.
+
+In order to make it work you can download the SFDX project from [this GitHub repo](https://github.com/DaniSpain/Salesforce-Commerce-on-Core/tree/main/LWR%20Cart%20Switcher) and just deploy the "b2bleCartSwitcher" LWC to override the configuration
+
+This way the effectiveAccountId is taken from the session context and not from the component parameter.
