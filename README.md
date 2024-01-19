@@ -1,4 +1,4 @@
-## Collection of Demo Components
+## Collection of Demo Components for Salesforce B2B/D2C Commerce
 This is a collection of components built for Salesforce B2B and D2C Commerce mainly for Demo purposes, but they can be used for free and extended accordngly to your customer needs.
 Me or Salesofrce doesn't give any support on this components since they are not ofiicialy distributed through the appexchange.
 
