@@ -73,8 +73,10 @@ March 27, 2024
 * Added toast message for LWR store after add to cart
 * Disable add to cart button during add to cart process
 * Fix to show the grid also on the variation parent
+
 May 14, 2021: 
 * fixed missing sizes with “not available” message
+
 Thursday, December 16, 2021
 * Added visual effect when adding products
 * added stock quantity and preorder capabilities
