@@ -13,6 +13,8 @@ export default class B2bleAssortmentBuilder extends LightningElement {
 
     @api inputQty = {};
 
+    disableAddToCart = false;
+
     connectedCallback() {
         if (this.propShowAtp != null && this.propShowAtp == "yes") {
             this.showAtp = true;
@@ -55,6 +57,25 @@ export default class B2bleAssortmentBuilder extends LightningElement {
         effectiveAccountId: '$resolvedEffectiveAccountId'
     })
     products;
+
+    //toast variables
+    displayToast = false;
+    toastClass;
+    toastIconName;
+    toastTitle;
+    toastMessage;
+
+    closeToast() {
+        this.displayToast = false;
+    }
+
+    showToast(title, message, variant) {
+        this.toastTitle = title;
+        this.toastMessage = message;
+        this.toastClass = "toast toast-" + variant;
+        this.toastIconName = variant == "success" ? "utility:success" : "utility:error";
+        this.displayToast = true;
+    }
 
     /**
      * we use this function to aggregate what we got from getAssortmentProducts by size and color
@@ -279,6 +300,7 @@ export default class B2bleAssortmentBuilder extends LightningElement {
     addAllToCart(event) {
         console.log("Adding to cart");
         console.log(this.inputQty);
+        this.disableAddToCart = true;
         
         addToCart({
             communityId: communityId,
@@ -292,26 +314,23 @@ export default class B2bleAssortmentBuilder extends LightningElement {
                     composed: true
                 })
             );
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Success',
-                    message: 'Your cart has been updated.',
-                    variant: 'success',
-                    mode: 'dismissable'
-                })
+            this.showToast(
+                "Success",
+                "Your cart have been updated",
+                "success"
             );
+            console.log("Successfully added to cart");
+            this.disableAddToCart = false;
         })
-        .catch(() => {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Error',
-                    message:
-                        '{0} could not be added to your cart at this time. Please try again later.',
-                    messageData: [this.displayableProduct.name],
-                    variant: 'error',
-                    mode: 'dismissable'
-                })
+        .catch((error) => {
+            console.error("error adding items to cart");
+            console.error(error);
+            this.showToast(
+                "Error",
+                "There was a problem adding items to the cart.",
+                "error"
             );
+            this.disableAddToCart = false;
         });
 
     }

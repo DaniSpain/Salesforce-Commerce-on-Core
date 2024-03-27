@@ -1,4 +1,18 @@
 <template>
+
+    <div class="toast-container" if:true={displayToast}>
+        <div class={toastClass}>
+            <div class="toast-icon"><lightning-icon icon-name={toastIconName} class="notify-icon"></lightning-icon></div>
+            <div class="error-text">
+                <div class="toast-heading">{toastTitle}</div>
+                <div class="toast-message">{toastMessage}</div>
+            </div>
+            <div class="toast-close" onclick={closeToast} id="close">
+                <lightning-icon icon-name="utility:close" alternative-text="Close" class="notify-icon"></lightning-icon>
+            </div>
+        </div>
+    </div>
+    
     <template if:true={products.data}>
         <div>
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
@@ -76,7 +90,7 @@
                     </template>
                 </tbody>
             </table>
-            <lightning-button variant="brand" label="Add all to cart" title="Add all to cart" onclick={addAllToCart} class="slds-m-left_x-small"></lightning-button>
+            <lightning-button variant="brand" label="Add all to cart" title="Add all to cart" onclick={addAllToCart} class="slds-m-left_x-small" disabled={disableAddToCart}></lightning-button>
         </div>
     </template>
 </template>
