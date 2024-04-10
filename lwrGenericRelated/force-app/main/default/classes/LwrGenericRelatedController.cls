@@ -21,7 +21,8 @@ public without sharing class LwrGenericRelatedController {
         String junctionToChildRelationshipApiName,
         String[] fields,
         String[] relationshipFields,
-        String whereConditions){
+        String whereConditions,
+        String takeRelationshipsFromVariationParent){
             Type t = Type.forName(junctionObjectApiName);
             SObject jobj = (SObject)t.newInstance();
 
@@ -65,6 +66,19 @@ public without sharing class LwrGenericRelatedController {
         ConnectApi.ProductOverviewCollection productCollection = ConnectApi.CommerceCatalog.getProducts(webstoreId,effectiveAccountId,productIds,null,null,false,false);
         List<ConnectApi.ProductOverview> productOverviews = productCollection.products;
         return productOverviews;
+    }
+
+    @AuraEnabled(cacheable = false)
+    public static ConnectApi.ProductDetail getProduct(String communityId, String productId, String effectiveAccountId){
+      String webstoreId = resolveCommunityIdToWebstoreId(communityId);
+      
+      ConnectApi.ProductDetail productDetail = ConnectApi.CommerceCatalog.getProduct(
+        webstoreId,
+        productId,
+        effectiveAccountId,
+        null, false, null, false, false, false);
+      
+      return productDetail;
     }
 
     public static String resolveCommunityIdToWebstoreId(String communityId) {

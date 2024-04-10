@@ -9,6 +9,7 @@ import getParentRecord from '@salesforce/apex/LwrGenericRelatedController.getPar
 import getChildrenRecord from '@salesforce/apex/LwrGenericRelatedController.getChildren';
 import getCommerceProducts from '@salesforce/apex/LwrGenericRelatedController.getCommerceProducts';
 import { addItemToCart } from 'commerce/cartApi';
+import getCommerceProduct from '@salesforce/apex/LwrGenericRelatedController.getProduct';
 
 const ADD_PRODUCT_TO_CART_EVT = 'addproducttocart';
 const CART_CHANGED_EVT = 'cartchanged';
@@ -74,7 +75,6 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         this.displayToast = true;
     }
 
-
     connectedCallback() {
         console.log("LwrGenericRelated::connected callback");
 
@@ -136,11 +136,56 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
         console.log("wired children records");
         console.log(data);
         this.childMappedData = [];
-        if (data && data.length > 0) {
-            console.log("LwrGenericRelated::getChildrenRecord::got data");
-            console.log(data);
-            this.mapFieldData(data);
-        } 
+
+        Promise.all([ getSessionContext()]).then((sessionContext) => {
+            console.log("session context");
+            console.log(sessionContext);
+            console.log("setting effective account from API: " + sessionContext[0].effectiveAccountId);
+            this.effectiveAccountId = sessionContext[0].effectiveAccountId ? sessionContext[0].effectiveAccountId : null;
+            
+            if (data && data.length > 0 && this.childMappedData.length == 0) {
+                console.log("LwrGenericRelated::getChildrenRecord::got data");
+                console.log(data);
+                this.mapFieldData(data);
+            } else if (data && data.length == 0) {
+                //checks if the current item is a product
+                if (this.parentObjectAPIName == "Product2") {
+                    //checks if the product is a variation
+                    getCommerceProduct({
+                        communityId: communityId,
+                        productId: this.recordId,
+                        effectiveAccountId: this.effectiveAccountId
+                    }).then(data => {
+                        console.log("LwrGenericRelated::getCommerceProduct::Got Commerce Parent Product");
+                        console.log(data);
+                        if (data.variationParentId && data.variationParentId != null) {
+                            //override the parent record id
+                            this.recordId = data.variationParentId;
+                            getChildrenRecord({
+                                parentId: this.recordId,
+                                junctionObjectApiName: this.junctionObjectAPIName,
+                                junctionToParentRelationshipApiName: this.junctionObjectToParentRelationship,
+                                junctionToChildRelationshipApiName: this.junctionObjectToChildRelationship,
+                                fields: this.childFields,
+                                relationshipFields: this.relationshipFields,
+                                whereConditions: this.whereConditions
+                            }).then(data => {
+                                console.log("LwrGenericRelated::VARIANT::getChildrenRecord");
+                                console.log(data);
+                                if (data && data.length > 0) {
+                                    this.mapFieldData(data);
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("LwrGenericRelated::getCommerceProduct::error");
+                        console.error(error);
+                    })
+                }
+            }
+        });
+
         if (error) {
             console.error("LwrGenericRelated::getChildrenRecord::error");
             console.error(error);
@@ -245,33 +290,26 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
 
         //we control if the child object is a Product2 and, if yes, we get the info from Commerce APIs
         if (this.takeImageFromMedia) {
-            Promise.all([ getSessionContext()]).then((sessionContext) => {
-                console.log("session context");
-                console.log(sessionContext);
-                console.log("setting effective account from API: " + sessionContext[0].effectiveAccountId);
-                this.effectiveAccountId = sessionContext[0].effectiveAccountId ? sessionContext[0].effectiveAccountId : null;
+            getCommerceProducts({
+                communityId: communityId,
+                productIds: childIds,
+                effectiveAccountId: this.effectiveAccountId
+            }).then(data => {
+                console.log("LwrGenericRelated::mapFieldData::getCommerceProducts::Got Commerce Products");
+                console.log(data);
 
-                getCommerceProducts({
-                    communityId: communityId,
-                    productIds: childIds,
-                    effectiveAccountId: this.effectiveAccountId
-                }).then(data => {
-                    console.log("LwrGenericRelated::mapFieldData::getCommerceProducts::Got Commerce Products");
-                    console.log(data);
-    
-                    //now we decorate the mapped fields with the image
-                    for (var i=0; i<data.length; i++) {
-                        this.childMappedData[i].Image = data[i].defaultImage.url;
-                    }
-    
-                    console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
-                    console.log(this.childMappedData);
-                })
-                .catch(error => {
-                    console.error("LwrGenericRelated::mapFieldData::getCommerceProducts::error");
-                    console.error(error);
-                })
-            });
+                //now we decorate the mapped fields with the image
+                for (var i=0; i<data.length; i++) {
+                    this.childMappedData[i].Image = data[i].defaultImage.url;
+                }
+
+                console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
+                console.log(this.childMappedData);
+            })
+            .catch(error => {
+                console.error("LwrGenericRelated::mapFieldData::getCommerceProducts::error");
+                console.error(error);
+            })
         }
     }
 
