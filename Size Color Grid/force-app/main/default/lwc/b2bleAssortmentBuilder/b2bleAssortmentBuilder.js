@@ -8,6 +8,7 @@ export default class B2bleAssortmentBuilder extends LightningElement {
     @api recordId;
     @api propShowAtp;
     @api showAtp = false;
+    @api firstColumnLabel;
     
     @track sizeColorMap;
 
