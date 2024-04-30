@@ -47,7 +47,7 @@ public with sharing class AssortmentBuilderController {
         //String productBaseSku = [Select Base_SKU__c from Product2 where Id = :productId limit 1].Base_SKU__c;
         
         //now we get all the products with the same base SKU
-        List<Product2> assortmentProducts = [Select Id, Size__c from Product2 where Base_SKU__c = :productBaseSku ORDER BY Name, Size__c ASC];
+        List<Product2> assortmentProducts = [SELECT Id, Size__c FROM Product2 WHERE Base_SKU__c = :productBaseSku ORDER BY Size__c ASC];
         
         //an then we get the product info for each product from the Commerce APIs
         List<ConnectApi.ProductDetail> returnProducts = new List<ConnectApi.ProductDetail>();
