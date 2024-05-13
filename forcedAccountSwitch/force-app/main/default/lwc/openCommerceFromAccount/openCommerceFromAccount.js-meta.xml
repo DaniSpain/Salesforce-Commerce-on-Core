@@ -7,12 +7,15 @@
         <target>lightningCommunity__Page</target>
         <target>lightningCommunity__Default</target>
         <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
     </targets>
     <targetConfigs>
-        <targetConfig targets="lightningCommunity__Default">
+        <targetConfig targets="lightningCommunity__Default,lightning__RecordPage">
             <property name="label" type="String" label="Button Label" default="CREATE ORDER"/>
             <property name="storefrontURL" type="String" label="Storefront URL" default="https://coesia231016demo.my.site.com/b2benh/"/>
-            <property name="accountId" type="String" label="Account ID" default="{!recordId}"/>
+            <property name="recordId" type="String" label="Account ID" default="{!recordId}"/>
+            <property name="internalUser" type="Boolean" label="Internal User" description="Flag true if you are placing the component in an internal page instead of a community page" default="false"/>
+            <property name="networkId" type="String" label="Site Netwok Id" description="The site network ID, used only for internal users"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
