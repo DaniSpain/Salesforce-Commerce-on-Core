@@ -13,6 +13,7 @@ import deleteCart from '@salesforce/apex/CartSwitcherController.deleteCart';
 import takeOwnership from '@salesforce/apex/CartSwitcherController.takeOwnership';
 import releaseOwnership from '@salesforce/apex/CartSwitcherController.releaseOwnership';
 import shareCart from '@salesforce/apex/CartSwitcherController.shareCart';
+import invokeRenameCart from '@salesforce/apex/CartSwitcherController.renameCart';
 
 export default class B2bleCartSwitcher extends LightningElement {
     @api effectiveAccountId;
@@ -22,6 +23,7 @@ export default class B2bleCartSwitcher extends LightningElement {
 
     @track showDeleteModal = false;
     @track showCreateModal = false;
+    @track showRenameModal = false;
     //@track currentCart;
 
     orderOptions = [];
@@ -214,6 +216,37 @@ export default class B2bleCartSwitcher extends LightningElement {
         })
         .catch(err => {
             console.error("Error deleting the cart " + cartId);
+            console.error(err);
+        });
+    }
+
+    cartToBeRenamed = null;
+    newCartName = null;
+    openRenameModal(evt) {
+        var cartId = evt.currentTarget.dataset.id;
+        this.cartToBeRenamed = cartId;
+        this.showRenameModal = true;
+    }
+    handleCartNameChange(evt) {
+        this.newCartName = evt.detail.value;
+        console.log("Cart Name: " + this.newCartName);
+    }
+    closeRenameModal() {
+        this.cartToBeRenamed = null;
+        this.showRenameModal = false;
+    }
+    renameCart() {
+        console.log("Renaming cart: " + this.cartToBeRenamed);
+        console.log("New Cart name: " + this.newCartName);
+        invokeRenameCart({
+            cartId: this.cartToBeRenamed,
+            newCartName: this.newCartName
+        }).then(result => {
+            console.log("Renamed cart");
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error("Error renaming the cart " + cartId);
             console.error(err);
         });
     }

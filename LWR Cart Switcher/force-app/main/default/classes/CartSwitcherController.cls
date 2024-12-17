@@ -6,7 +6,7 @@ public class CartSwitcherController {
         
         List<WebCart> carts = [SELECT Id, Name, Order_Type__c, OwnerId, isSecondary, Old_Owner__c, Shared__c
                                FROM WebCart 
-                               WHERE AccountId = :effectiveAccountId AND Status = 'Active' AND WebStoreId = :webstoreId];
+                               WHERE AccountId = :effectiveAccountId AND (Status = 'Active' OR Status = 'Checkout') AND WebStoreId = :webstoreId];
 
         
         //TODO: for each cart return the cart summary to see which one is the primary
@@ -63,12 +63,13 @@ public class CartSwitcherController {
     public static void takeOwnership(String communityId, String effectiveAccountId, String cartId) {
         String webstoreId = resolveCommunityIdToWebstoreId(communityId);
         
-        //first we make all the carts secondary
+        //first we make all the carts secondary and Active so that they are not locked
         List<WebCart> carts = [SELECT Id, Name, IsSecondary, Order_Type__c 
           FROM WebCart 
-          WHERE AccountId = :effectiveAccountId AND Status = 'Active' AND WebStoreId = :webstoreId];
+          WHERE AccountId = :effectiveAccountId AND (Status = 'Active' OR Status = 'Checkout') AND WebStoreId = :webstoreId];
         for (WebCart cart : carts) {
           cart.isSecondary = true;
+          cart.Status = 'Active';
         }
         update carts;
         
@@ -131,6 +132,13 @@ public class CartSwitcherController {
     public static void deleteCart(String communityId, String effectiveAccountId, String cartId) {
         String webstoreId = resolveCommunityIdToWebstoreId(communityId);
 		ConnectApi.CommerceCart.deleteCart(webstoreId, effectiveAccountId, cartId);
+    }
+
+    @AuraEnabled(cacheable=false)
+    public static void renameCart(String cartId, String newCartName) {
+      WebCart cart = [SELECT Id, Name FROM WebCart WHERE Id = :cartId][0];
+      cart.Name = newCartName;
+      update cart;
     }
     
     public class CartWrapper {
