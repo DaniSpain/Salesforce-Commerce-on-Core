@@ -6,7 +6,7 @@ public with sharing class B2BFreeProductController {
     @AuraEnabled
     public static List<CartItem> getCartItems(String cartId){
         List<CartItem> cartItems = [
-            SELECT Id, Name, Quantity, TotalPrice, TotalAmount, TotalLineAmount
+            SELECT Id, Name, Quantity, TotalPrice, TotalAmount, TotalLineAmount, Manual_Adjustment__c
             FROM CartItem
             WHERE CartId = :cartId
             ORDER BY CreatedDate DESC
@@ -18,12 +18,51 @@ public with sharing class B2BFreeProductController {
     @AuraEnabled
     public static void setFree(String cartItemId){
         CartItem ci = [
-            SELECT Id, TotalPrice, TotalAmount, TotalLineAmount
+            SELECT Id, TotalPrice, TotalAmount, TotalLineAmount, Manual_Adjustment__c 
             FROM CartItem
             WHERE Id = :cartItemId
         ];
         ci.TotalPrice = 0.0;
         ci.TotalLineAmount = 0.0;
+        ci.SalesPrice = 0.0;
+        update ci;
+    }
+
+    @AuraEnabled
+    public static void applyPercentageDiscount(String cartItemId, String discount){
+        CartItem ci = [
+            SELECT Id, TotalPrice, TotalAmount, TotalLineAmount, Manual_Adjustment__c
+            FROM CartItem
+            WHERE Id = :cartItemId
+        ];
+        Decimal disc = decimal.valueOf(discount);
+        ci.TotalPrice = ci.TotalPrice - ci.TotalPrice * disc;
+        ci.TotalLineAmount = ci.TotalPrice;
+        ci.SalesPrice = ci.TotalPrice;
+        ci.Manual_Adjustment__c = (decimal.valueOf(discount)*100) + '%';
+        update ci;
+    }
+
+    @AuraEnabled
+    public static void applyDiscount(String cartItemId, String discount, String discountType, String currencyIsoCode){
+        CartItem ci = [
+            SELECT Id, TotalPrice, TotalAmount, TotalLineAmount, Manual_Adjustment__c
+            FROM CartItem
+            WHERE Id = :cartItemId
+        ];
+        if (discountType == 'percent') {
+            Decimal disc = decimal.valueOf(discount)/100;
+            ci.TotalPrice = ci.TotalPrice - ci.TotalPrice * disc;
+            ci.TotalLineAmount = ci.TotalPrice;
+            ci.SalesPrice = ci.TotalPrice;
+            ci.Manual_Adjustment__c = decimal.valueOf(discount) + '%';
+        } else {
+            Decimal disc = decimal.valueOf(discount);
+            ci.TotalPrice = ci.TotalPrice - disc;
+            ci.TotalLineAmount = ci.TotalPrice;
+            ci.SalesPrice = ci.TotalPrice;
+            ci.Manual_Adjustment__c = discount + ' ' + currencyIsoCode;
+        }
         update ci;
     }
     
