@@ -3,6 +3,7 @@ import communityId from '@salesforce/community/Id';
 import getAssortmentProducts from '@salesforce/apex/AssortmentBuilderController.getProducts';
 import addToCart from '@salesforce/apex/AssortmentBuilderController.addToCart';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getAppContext, getSessionContext } from "commerce/contextApi";
 
 export default class B2bleAssortmentBuilder extends LightningElement {
     @api recordId;
@@ -303,37 +304,44 @@ export default class B2bleAssortmentBuilder extends LightningElement {
         console.log(this.inputQty);
         this.disableAddToCart = true;
         
-        addToCart({
-            communityId: communityId,
-            productQtyJSON: JSON.stringify(this.inputQty),
-            effectiveAccountId: this.resolvedEffectiveAccountId
-        })
-        .then(() => {
-            this.dispatchEvent(
-                new CustomEvent('cartchanged', {
-                    bubbles: true,
-                    composed: true
-                })
-            );
-            this.showToast(
-                "Success",
-                "Your cart have been updated",
-                "success"
-            );
-            console.log("Successfully added to cart");
-            this.disableAddToCart = false;
-        })
-        .catch((error) => {
-            console.error("error adding items to cart");
-            console.error(error);
-            this.showToast(
-                "Error",
-                "There was a problem adding items to the cart.",
-                "error"
-            );
-            this.disableAddToCart = false;
+        //we get effective account id from context
+        Promise.all([ getSessionContext()]).then((sessionContext) => {
+            console.log("session context");
+            console.log(sessionContext);
+            console.log("setting effective account from API: " + sessionContext[0].effectiveAccountId);
+            var effectiveAccountId = sessionContext[0].effectiveAccountId;
+            
+            addToCart({
+                communityId: communityId,
+                productQtyJSON: JSON.stringify(this.inputQty),
+                effectiveAccountId: effectiveAccountId
+            })
+            .then(() => {
+                this.dispatchEvent(
+                    new CustomEvent('cartchanged', {
+                        bubbles: true,
+                        composed: true
+                    })
+                );
+                this.showToast(
+                    "Success",
+                    "Your cart have been updated",
+                    "success"
+                );
+                console.log("Successfully added to cart");
+                this.disableAddToCart = false;
+            })
+            .catch((error) => {
+                console.error("error adding items to cart");
+                console.error(error);
+                this.showToast(
+                    "Error",
+                    "There was a problem adding items to the cart.",
+                    "error"
+                );
+                this.disableAddToCart = false;
+            });
         });
 
     }
-
 }
