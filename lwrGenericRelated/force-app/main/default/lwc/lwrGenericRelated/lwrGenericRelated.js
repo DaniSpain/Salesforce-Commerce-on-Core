@@ -36,11 +36,13 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
     @api additionalChildObjectFieldsLabels;
     @api additionalRelationshipObjectFieldsLabels;
     @api showAddToCart;
+    @api showSearch;
 
     //NOT USED ANYMORE
     @api additionalFields;
 
     @track childMappedData = [];
+    @track filteredData = []
     //@track columnClass = "child-tile col-3";
     @track columnClass = "slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12";
 
@@ -283,6 +285,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
             console.log(mappedDataItem);
             childIds.push(mappedDataItem.Id);
             this.childMappedData.push(mappedDataItem);
+            this.filteredData.push(mappedDataItem);
         }
 
         console.log("LwrGenericRelated::mapFieldData::Mapped Data");
@@ -301,6 +304,7 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
                 //now we decorate the mapped fields with the image
                 for (var i=0; i<data.length; i++) {
                     this.childMappedData[i].Image = data[i].defaultImage.url;
+                    this.filteredData[i].Image = data[i].defaultImage.url;
                 }
 
                 console.log("LwrGenericRelated::mapFieldData::Mapped Data with product image");
@@ -342,6 +346,28 @@ export default class LwrGenericRelated extends NavigationMixin(LightningElement)
                 console.error("error adding to the cart");
                 console.error(error);
             });
+    }
+
+    handleSearchChange(event) {
+        var searchText = event.detail.value;
+        console.log("Searching for " + searchText);
+
+        this.filteredData = this.childMappedData.filter(item => this.searchInObject(item, searchText));
+        console.log(this.filteredData);
+    }
+
+    searchInObject(obj, searchText) {
+        return Object.values(obj).some(value => {
+            if (Array.isArray(value)) {
+                // Recursively check each element of the array
+                return value.some(item => this.searchInObject(item, searchText));
+            } else if (value != null && typeof value === 'object') {
+                // Recursively search nested objects
+                return this.searchInObject(value, searchText);
+            }
+          // If the value is not an object, perform the string match
+          return value != null && value.toString().toLowerCase().includes(searchText.toLowerCase());
+        });
     }
 
     /*

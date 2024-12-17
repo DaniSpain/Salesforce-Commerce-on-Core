@@ -14,14 +14,19 @@
     </div>
 
     <div>
-        <template if:true={childMappedData}>
+        <template if:true={filteredData}>
             <h2>{headerText}</h2>
+            <template if:true={showSearch}>
+                <lightning-input type="text" label="Search Items" onchange={handleSearchChange}></lightning-input>
+            </template>
             <div class="child-container">
                 <template if:true={displayAsGrid}>
                     <div class="slds-grid slds-wrap slds-gutters">
-                        <template for:each={childMappedData} for:item="c">
+                        <template for:each={filteredData} for:item="c">
                             <div class={columnClass} key={c.Id} data-id={c.Id}>
-                                <img src={c.Image} />
+                                <template if:true={showImage}>
+                                    <img src={c.Image} />
+                                </template>
                                 <div style="padding: 1em;">
                                     <a href={c.Url}><h3>{c.Title}</h3></a>
                                     <p>{c.Subtitle}</p>
@@ -61,11 +66,13 @@
                     </div>
                 </template>
                 <template if:false={displayAsGrid}>
-                    <template for:each={childMappedData} for:item="c">
+                    <template for:each={filteredData} for:item="c">
                         <div class="slds-grid slds-wrap slds-gutters list-item" key={c.Id} data-id={c.Id}>
-                            <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12 slds-large-size_3-of-12">
-                                <img src={c.Image} />
-                            </div>
+                            <template if:true={showImage}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12 slds-large-size_3-of-12">
+                                    <img src={c.Image} />
+                                </div>
+                            </template>
                             <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
                                 <a href={c.Url}><h3>{c.Title}</h3></a>
                                 <p>{c.Subtitle}</p>

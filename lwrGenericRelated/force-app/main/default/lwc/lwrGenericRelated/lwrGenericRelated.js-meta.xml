@@ -32,6 +32,7 @@
             <property name="additionalRelationshipObjectFieldsLabels" type="String" label="Additional Relationship Object Field Labels" description="Comma-Separated Labels for the Relationship Object Fields that you want to show for each element. The order must be the same as the fields" default="" required="false" />
             <property name="additionalFields" type="String" label="Additional Fields (deprecated)" description="Use Additional Child Object Fields and/or Additional Relationship Object Fields instead" default="" required="false" />
             <property name="showAddToCart" type="Boolean" label="Show Add to Cart button" description="Shows an add to cart button for each child. Works only if the child object type is Product2" default="FALSE" required="false" />
+            <property name="showSearch" type="Boolean" label="Show Search Input" description="Shows a search input text to search within the results" default="FALSE" required="false" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
